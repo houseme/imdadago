@@ -1,4 +1,4 @@
-# Dada logistics information service open platform SDK for Golang language
+# Dada Logistics Open Platform SDK For Golang Language
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/houseme/imdada-go)](https://goreportcard.com/report/github.com/houseme/imdada-go)
 [![Go Reference](https://pkg.go.dev/badge/github.com/houseme/imdada-go.svg)](https://pkg.go.dev/github.com/houseme/imdada-go)
@@ -7,6 +7,7 @@
 ![GitHub go.mod Go version (branch)](https://img.shields.io/github/go-mod/go-version/houseme/imdada-go/main?style=flat-square)
 
 Dada logistics information service open platform SDK for Golang language.
+Help you save costs and achieve efficient distribution
 
 ## Installation
 
