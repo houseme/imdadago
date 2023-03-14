@@ -1,6 +1,6 @@
 module github.com/houseme/imdada-go
 
-go 1.18
+go 1.19
 
 require (
 	github.com/bytedance/sonic v1.8.5
