@@ -11,8 +11,12 @@ package dada
 
 import (
 	"context"
+	"crypto/md5"
 	"crypto/tls"
+	"encoding/hex"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/bytedance/sonic"
@@ -20,6 +24,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 
+	"github.com/houseme/imdada-go/domain"
 	"github.com/houseme/imdada-go/log"
 )
 
@@ -120,17 +125,18 @@ func WithLevel(level log.Level) Option {
 
 // Client is the ImDada client.
 type Client struct {
-	request  *protocol.Request
+	request  *domain.Request
 	response *protocol.Response
 	log      log.ILogger
 	op       options
+	gateway  string
 }
 
 // New creates a new ImDada client.
 func New(ctx context.Context, opts ...Option) *Client {
 	op := options{
 		TimeOut:   5 * time.Second,
-		UserAgent: userAgent,
+		UserAgent: []byte(userAgent),
 		Gateway:   gateway,
 		Level:     log.DebugLevel,
 		LogPath:   os.TempDir(),
@@ -143,19 +149,64 @@ func New(ctx context.Context, opts ...Option) *Client {
 	return &Client{
 		op:       op,
 		log:      log.New(ctx, log.WithLevel(op.Level), log.WithLogPath(op.LogPath)),
-		request:  &protocol.Request{},
 		response: &protocol.Response{},
+		request: &domain.Request{
+			AppKey:   op.AppKey,
+			V:        version,
+			Format:   format,
+			SourceID: op.SourceID,
+		},
 	}
 }
 
+// generateTimestamp Generate current time
+func (c *Client) generateTimestamp() {
+	c.request.Timestamp = time.Now().Unix()
+}
+
+// md5Sign
+func (c *Client) md5Sign() {
+	var (
+		h       = md5.New()
+		builder strings.Builder
+	)
+	builder.WriteString(c.op.AppSecret)
+	builder.WriteString("app_key" + c.request.AppKey)
+	builder.WriteString("body" + c.request.Body)
+	builder.WriteString("format" + c.request.Format)
+	builder.WriteString("source_id" + c.request.SourceID)
+	builder.WriteString("timestamp" + strconv.FormatInt(c.request.Timestamp, 10))
+	builder.WriteString("v" + c.request.V)
+	builder.WriteString(c.op.AppSecret)
+	h.Write([]byte(builder.String()))
+	c.request.Signature = strings.ToUpper(hex.EncodeToString(h.Sum(nil)))
+}
+
+// initRequest
+func (c *Client) initRequest(method string) {
+	c.generateTimestamp()
+	c.md5Sign()
+	c.gateway = c.op.Gateway + method
+}
+
 // doRequest does the request.
-func (c *Client) doRequest(ctx context.Context, formData map[string]string) error {
-	c.log.Debug(ctx, "formData:", formData)
-	c.request.SetMultipartFormData(formData)
-	c.request.SetRequestURI(c.op.Gateway)
-	c.request.Header.SetMethod(consts.MethodPost)
-	c.request.Header.SetUserAgentBytes(c.op.UserAgent)
-	c.log.Debug(ctx, "request content: ", c.request)
+func (c *Client) doRequest(ctx context.Context, method string) error {
+	c.initRequest(method)
+	c.log.Debug(ctx, "request data: ", c.request)
+	jsonBytes, err := sonic.Marshal(c.request)
+	if err != nil {
+		return err
+	}
+	c.log.Debug(ctx, "jsonBytes: ", string(jsonBytes))
+	request := &protocol.Request{}
+	request.SetBody(jsonBytes)
+	request.Header.SetContentTypeBytes([]byte("application/json"))
+	request.Header.Set("accept", "application/json")
+	c.log.Debug(ctx, "request url: ", c.gateway)
+	request.SetRequestURI(c.gateway)
+	request.Header.SetMethod(consts.MethodPost)
+	request.Header.SetUserAgentBytes(c.op.UserAgent)
+	c.log.Debug(ctx, "request create end")
 
 	hertz, err := client.NewClient(client.WithTLSConfig(&tls.Config{
 		InsecureSkipVerify: true,
@@ -165,14 +216,23 @@ func (c *Client) doRequest(ctx context.Context, formData map[string]string) erro
 	}
 
 	c.log.Debug(ctx, "do request start")
-	err = hertz.Do(ctx, c.request, c.response)
-	if err != nil {
-		return err
-	}
-	c.log.Debug(ctx, "do request end")
-	var resp map[string]interface{}
-	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+	if err = hertz.Do(ctx, request, c.response); err != nil {
 		return err
 	}
 	return nil
+}
+
+// QueryBalance query balance.
+func (c *Client) QueryBalance(ctx context.Context, req *domain.QueryBalanceRequest) (resp *domain.QueryBalanceResponse, err error) {
+	if c.request.Body, err = sonic.MarshalString(req); err != nil {
+		return nil, err
+	}
+	if err = c.doRequest(ctx, queryBalance); err != nil {
+		return nil, err
+	}
+	c.log.Debug(ctx, "response data: ", string(c.response.Body()))
+	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+		return nil, err
+	}
+	return
 }

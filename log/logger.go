@@ -74,7 +74,7 @@ type (
 	Logger struct {
 		op    options
 		level Level
-		log   *zap.Logger
+		log   *zap.SugaredLogger
 	}
 	options struct {
 		LogPath string
@@ -151,98 +151,99 @@ func New(_ context.Context, opts ...Option) *Logger {
 	errorFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(errorFileWriteSyncer, zapcore.AddSync(os.Stdout)), highPriority) // 第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
 
 	coreArr = append(coreArr, errorFileCore)
+	zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()).Log(zap.InfoLevel, "logger init success")
 	return &Logger{
 		level: op.Level,
-		log:   zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()), // zap.AddCaller()为显示文件名和行号，可省略
+		log:   zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()).Sugar(), // zap.AddCaller()为显示文件名和行号，可省略
 	}
 }
 
 // Print is the interface for print
 func (l *Logger) Print(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Info(v...)
+	l.log.Info(v...)
 }
 
 // Printf is the interface for printf
 func (l *Logger) Printf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Infof(format, v...)
+	l.log.Infof(format, v...)
 }
 
 // Debug is the interface for debug
 func (l *Logger) Debug(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Debug(v...)
+	l.log.Debug(v...)
 }
 
 // Debugf is the interface for debugf
 func (l *Logger) Debugf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Debugf(format, v...)
+	l.log.Debugf(format, v...)
 }
 
 // Info is the interface for info
 func (l *Logger) Info(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Info(v...)
+	l.log.Info(v...)
 }
 
 // Infof is the interface for infof
 func (l *Logger) Infof(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Infof(format, v...)
+	l.log.Infof(format, v...)
 }
 
 // Notice is the interface for notice
 func (l *Logger) Notice(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Info(v...)
+	l.log.Info(v...)
 }
 
 // Noticef is the interface for noticef
 func (l *Logger) Noticef(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Infof(format, v...)
+	l.log.Infof(format, v...)
 }
 
 // Warning is the interface for warning
 func (l *Logger) Warning(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Warn(v...)
+	l.log.Warn(v...)
 }
 
 // Warningf is the interface for warningf
 func (l *Logger) Warningf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Warnf(format, v...)
+	l.log.Warnf(format, v...)
 }
 
 // Error is the interface for error
 func (l *Logger) Error(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Error(v...)
+	l.log.Error(v...)
 }
 
 // Errorf is the interface for errorf
 func (l *Logger) Errorf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Errorf(format, v...)
+	l.log.Errorf(format, v...)
 }
 
 // Critical is the interface for critical
 func (l *Logger) Critical(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Fatal(v...)
+	l.log.Fatal(v...)
 }
 
 // Criticalf is the interface for criticalf
 func (l *Logger) Criticalf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Fatalf(format, v...)
+	l.log.Fatalf(format, v...)
 }
 
 // Panic is the interface for panic
 func (l *Logger) Panic(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Panic(v...)
+	l.log.Panic(v...)
 }
 
 // Panicf is the interface for panicf
 func (l *Logger) Panicf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Panicf(format, v...)
+	l.log.Panicf(format, v...)
 }
 
 // Fatal is the interface for fatal
 func (l *Logger) Fatal(ctx context.Context, v ...interface{}) {
-	l.log.Sugar().Fatal(v...)
+	l.log.Fatal(v...)
 }
 
 // Fatalf is the interface for fatalf
 func (l *Logger) Fatalf(ctx context.Context, format string, v ...interface{}) {
-	l.log.Sugar().Fatalf(format, v...)
+	l.log.Fatalf(format, v...)
 }
