@@ -21,11 +21,11 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/hertz/pkg/app/client"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 
 	"github.com/houseme/imdada-go/domain"
-	"github.com/houseme/imdada-go/log"
 )
 
 // options is the configuration for the ImDada client.
@@ -36,8 +36,8 @@ type options struct {
 	Gateway   string
 	Callback  string
 	ShopNo    string
-	LogPath   string    // 日志路径
-	Level     log.Level // 日志级别
+	LogPath   string     // 日志路径
+	Level     hlog.Level // 日志级别
 	TimeOut   time.Duration
 	UserAgent []byte
 	Debug     bool
@@ -117,7 +117,7 @@ func WithLogPath(logPath string) Option {
 }
 
 // WithLevel sets the log level.
-func WithLevel(level log.Level) Option {
+func WithLevel(level hlog.Level) Option {
 	return func(o *options) {
 		o.Level = level
 	}
@@ -127,7 +127,7 @@ func WithLevel(level log.Level) Option {
 type Client struct {
 	request  *domain.Request
 	response *protocol.Response
-	log      log.ILogger
+	log      hlog.FullLogger
 	op       options
 	gateway  string
 }
@@ -138,7 +138,7 @@ func New(ctx context.Context, opts ...Option) *Client {
 		TimeOut:   5 * time.Second,
 		UserAgent: []byte(userAgent),
 		Gateway:   gateway,
-		Level:     log.DebugLevel,
+		Level:     hlog.LevelDebug,
 		LogPath:   os.TempDir(),
 	}
 
@@ -146,9 +146,9 @@ func New(ctx context.Context, opts ...Option) *Client {
 		option(&op)
 	}
 
-	return &Client{
+	c := &Client{
 		op:       op,
-		log:      log.New(ctx, log.WithLevel(op.Level), log.WithLogPath(op.LogPath)),
+		log:      nil,
 		response: &protocol.Response{},
 		request: &domain.Request{
 			AppKey:   op.AppKey,
@@ -157,6 +157,8 @@ func New(ctx context.Context, opts ...Option) *Client {
 			SourceID: op.SourceID,
 		},
 	}
+	c.initLog(ctx, op)
+	return c
 }
 
 // generateTimestamp Generate current time
@@ -192,21 +194,21 @@ func (c *Client) initRequest(method string) {
 // doRequest does the request.
 func (c *Client) doRequest(ctx context.Context, method string) error {
 	c.initRequest(method)
-	c.log.Debug(ctx, "request data: ", c.request)
+	c.log.CtxDebugf(ctx, "request data: %+v", c.request)
 	jsonBytes, err := sonic.Marshal(c.request)
 	if err != nil {
 		return err
 	}
-	c.log.Debug(ctx, "jsonBytes: ", string(jsonBytes))
+	c.log.CtxDebugf(ctx, "jsonBytes: %s", string(jsonBytes))
 	request := &protocol.Request{}
 	request.SetBody(jsonBytes)
 	request.Header.SetContentTypeBytes([]byte("application/json"))
 	request.Header.Set("accept", "application/json")
-	c.log.Debug(ctx, "request url: ", c.gateway)
+	c.log.CtxDebugf(ctx, "request url: %s", c.gateway)
 	request.SetRequestURI(c.gateway)
 	request.Header.SetMethod(consts.MethodPost)
 	request.Header.SetUserAgentBytes(c.op.UserAgent)
-	c.log.Debug(ctx, "request create end")
+	c.log.CtxDebugf(ctx, "request create end")
 
 	hertz, err := client.NewClient(client.WithTLSConfig(&tls.Config{
 		InsecureSkipVerify: true,
@@ -215,7 +217,7 @@ func (c *Client) doRequest(ctx context.Context, method string) error {
 		return err
 	}
 
-	c.log.Debug(ctx, "do request start")
+	c.log.CtxDebugf(ctx, "do request start")
 	if err = hertz.Do(ctx, request, c.response); err != nil {
 		return err
 	}
@@ -230,7 +232,7 @@ func (c *Client) QueryBalance(ctx context.Context, req *domain.QueryBalanceReque
 	if err = c.doRequest(ctx, queryBalance); err != nil {
 		return nil, err
 	}
-	c.log.Debug(ctx, "response data: ", string(c.response.Body()))
+	c.log.CtxDebugf(ctx, "response data: %s", string(c.response.Body()))
 	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
 		return nil, err
 	}
