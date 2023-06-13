@@ -16,3 +16,4 @@
 
 *.log
 *_test.go
+logs
