@@ -114,3 +114,39 @@ const (
 	// fetchCodeModify 修改取货码
 	fetchCodeModify = "/api/order/fetchCode/update"
 )
+
+const (
+	// rechargeCateH5 H5充值
+	rechargeCateH5 = "H5"
+	// rechargeCatePC PC充值
+	rechargeCatePC = "PC"
+)
+
+const (
+	foodSnacks            = 1  // 食品小吃
+	drink                 = 2  // 饮料
+	flowersAndGreenery    = 3  // 鲜花绿植
+	other                 = 5  // 其他
+	printingTicketing     = 8  // 文印票务
+	convenienceStores     = 9  // 便利店
+	freshFruit            = 13 // 水果生鲜
+	intraCityECommerce    = 19 // 同城电商
+	medicine              = 20 // 医药
+	cake                  = 21 // 蛋糕
+	wine                  = 24 // 酒品
+	smallCommodityMarkets = 25 // 小商品市场
+	clothing              = 26 // 服装
+	autoRepairParts       = 27 // 汽修零配
+	digitalAppliances     = 28 // 数码家电
+	crayfishBBQ           = 29 // 小龙虾/烧烤
+	supermarket           = 31 // 超市
+	chafingDish           = 51 // 火锅
+	personalCareMakeup    = 53 // 个护美妆
+	mother                = 55 // 母婴
+	homeTextiles          = 57 // 家居家纺
+	cellPhone             = 59 // 手机
+	home                  = 61 // 家装
+	adultProducts         = 63 // 成人用品
+	campus                = 65 // 校园
+	highEndMarket         = 66 // 高端市场
+)

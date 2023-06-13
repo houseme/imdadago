@@ -235,14 +235,102 @@ func (c *Client) doRequest(ctx context.Context, method string) error {
 }
 
 // QueryBalance query balance.
+// 查询账户余额 url: http://newopen.imdada.cn/#/development/file/balanceQuery
 func (c *Client) QueryBalance(ctx context.Context, req *domain.QueryBalanceRequest) (resp *domain.QueryBalanceResponse, err error) {
 	if c.request.Body, err = sonic.MarshalString(req); err != nil {
 		return nil, err
 	}
+	c.log.CtxDebugf(ctx, "QueryBalance request data: %s", c.request.Body)
 	if err = c.doRequest(ctx, queryBalance); err != nil {
 		return nil, err
 	}
-	c.log.CtxDebugf(ctx, "response data: %s", string(c.response.Body()))
+	c.log.CtxDebugf(ctx, "QueryBalance response data: %s", string(c.response.Body()))
+	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+		return nil, err
+	}
+	return
+}
+
+// Recharge account recharge.
+// 获取充值链接 url: http://newopen.imdada.cn/#/development/file/recharge
+func (c *Client) Recharge(ctx context.Context, req *domain.RechargeRequest) (resp *domain.RechargeResponse, err error) {
+	if c.request.Body, err = sonic.MarshalString(req); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "Recharge request data: %s", c.request.Body)
+	if err = c.doRequest(ctx, recharge); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "Recharge response data: %s", string(c.response.Body()))
+	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+		return nil, err
+	}
+	return
+}
+
+// CreateMerchant create merchant.
+// 添加商户 url: http://newopen.imdada.cn/#/development/file/merchantAdd
+func (c *Client) CreateMerchant(ctx context.Context, req *domain.MerchantCreateRequest) (resp *domain.MerchantCreateResponse, err error) {
+	if c.request.Body, err = sonic.MarshalString(req); err != nil {
+		return nil, err
+	}
+	c.request.SourceID = ""
+	c.log.CtxDebugf(ctx, "CreateMerchant request data: %s", c.request.Body)
+	if err = c.doRequest(ctx, merchantCreate); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "CreateMerchant response data: %s", string(c.response.Body()))
+	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+		return nil, err
+	}
+	return
+}
+
+// CreateShop create shop.
+// 添加门店 url: http://newopen.imdada.cn/#/development/file/shopAdd
+func (c *Client) CreateShop(ctx context.Context, req *domain.ShopCreateRequest) (resp *domain.ShopCreateResponse, err error) {
+	if c.request.Body, err = sonic.MarshalString(req); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "CreateShop request data: %s", c.request.Body)
+	if err = c.doRequest(ctx, shopCreate); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "CreateShop response data: %s", string(c.response.Body()))
+	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+		return nil, err
+	}
+	return
+}
+
+// ModifyShop modify shop.
+// 编辑门店 url: http://newopen.imdada.cn/#/development/file/shopUpdate
+func (c *Client) ModifyShop(ctx context.Context, req *domain.ShopUpdateRequest) (resp *domain.ShopUpdateResponse, err error) {
+	if c.request.Body, err = sonic.MarshalString(req); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "ModifyShop request data: %s", c.request.Body)
+	if err = c.doRequest(ctx, shopUpdate); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "ModifyShop response data: %s", string(c.response.Body()))
+	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
+		return nil, err
+	}
+	return
+}
+
+// QueryShop query shop.
+// 门店详情 url: http://newopen.imdada.cn/#/development/file/shopDetail
+func (c *Client) QueryShop(ctx context.Context, req *domain.ShopQueryRequest) (resp *domain.ShopQueryResponse, err error) {
+	if c.request.Body, err = sonic.MarshalString(req); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "QueryShop request data: %s", c.request.Body)
+	if err = c.doRequest(ctx, shopQuery); err != nil {
+		return nil, err
+	}
+	c.log.CtxDebugf(ctx, "QueryShop response data: %s", string(c.response.Body()))
 	if err = sonic.Unmarshal(c.response.Body(), &resp); err != nil {
 		return nil, err
 	}
