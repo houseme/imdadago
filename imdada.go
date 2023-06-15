@@ -1,5 +1,5 @@
 /*
- *  Copyright `IMDaDa-Go` Author(https://houseme.github.io/imdada-go/). All Rights Reserved.
+ *  Copyright `IMDaDa-Go` Author(https://houseme.github.io/imdadago/). All Rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,11 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *  You can obtain one at https://github.com/houseme/imdada-go.
+ *  You can obtain one at https://github.com/houseme/imdadago.
  */
 
-// Package dada is the ImDaDa-go client.
-package dada
+package dadago
 
 import (
 	"context"
@@ -37,121 +36,17 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 
-	"github.com/houseme/imdada-go/domain"
-	"github.com/houseme/imdada-go/internal/log"
+	"github.com/houseme/imdadago/domain"
+	"github.com/houseme/imdadago/internal/log"
 )
-
-// options is the configuration for the ImDada client.
-type options struct {
-	AppKey    string
-	AppSecret string
-	SourceID  string
-	Gateway   string
-	Callback  string
-	ShopNo    string
-	LogPath   string     // 日志路径
-	Level     hlog.Level // 日志级别
-	TimeOut   time.Duration
-	UserAgent []byte
-	Debug     bool
-}
-
-// Option the option is an ImDada option.
-type Option func(o *options)
-
-// WithAppKey sets the app key.
-func WithAppKey(appKey string) Option {
-	return func(o *options) {
-		o.AppKey = appKey
-	}
-}
-
-// WithAppSecret sets the app secret.
-func WithAppSecret(appSecret string) Option {
-	return func(o *options) {
-		o.AppSecret = appSecret
-	}
-}
-
-// WithSourceID sets the source id.
-func WithSourceID(sourceID string) Option {
-	return func(o *options) {
-		o.SourceID = sourceID
-	}
-}
-
-// WithGateway sets the gateway.
-func WithGateway(gateway string) Option {
-	return func(o *options) {
-		o.Gateway = gateway
-	}
-}
-
-// WithTimeOut sets the timeout.
-func WithTimeOut(timeout time.Duration) Option {
-	return func(o *options) {
-		o.TimeOut = timeout
-	}
-}
-
-// WithUserAgent sets the user agent.
-func WithUserAgent(userAgent []byte) Option {
-	return func(o *options) {
-		o.UserAgent = userAgent
-	}
-}
-
-// WithDebug sets the debug.
-func WithDebug(debug bool) Option {
-	return func(o *options) {
-		o.Debug = debug
-	}
-}
-
-// WithCallback sets the callback.
-func WithCallback(callback string) Option {
-	return func(o *options) {
-		o.Callback = callback
-	}
-}
-
-// WithShopNo sets the shop no.
-func WithShopNo(shopNo string) Option {
-	return func(o *options) {
-		o.ShopNo = shopNo
-	}
-}
-
-// WithLogPath sets the log path.
-func WithLogPath(logPath string) Option {
-	return func(o *options) {
-		o.LogPath = logPath
-	}
-}
-
-// WithLevel sets the log level.
-func WithLevel(level hlog.Level) Option {
-	return func(o *options) {
-		o.Level = level
-	}
-}
-
-// Client is the ImDada client.
-type Client struct {
-	request  *domain.Request
-	response *protocol.Response
-	log      hlog.FullLogger
-	op       options
-	gateway  string
-}
 
 // New creates a new ImDada client.
 func New(ctx context.Context, opts ...Option) *Client {
 	op := options{
-		TimeOut:   5 * time.Second,
+		TimeOut:   10 * time.Second,
 		UserAgent: []byte(userAgent),
 		Gateway:   gateway,
-		Level:     hlog.LevelDebug,
+		Level:     Level(hlog.LevelDebug),
 		LogPath:   os.TempDir(),
 	}
 
@@ -161,7 +56,7 @@ func New(ctx context.Context, opts ...Option) *Client {
 
 	c := &Client{
 		op:       op,
-		log:      log.InitLog(ctx, op.LogPath, op.Level),
+		log:      log.InitLog(ctx, op.LogPath, hlog.Level(op.Level)),
 		response: &protocol.Response{},
 		request: &domain.Request{
 			AppKey:   op.AppKey,
@@ -170,7 +65,7 @@ func New(ctx context.Context, opts ...Option) *Client {
 			SourceID: op.SourceID,
 		},
 	}
-	c.log.SetLevel(op.Level)
+	c.log.SetLevel(hlog.Level(op.Level))
 	c.log.CtxInfof(ctx, "im dada init client start level:%s", op.Level)
 	return c
 }
