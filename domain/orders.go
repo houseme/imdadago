@@ -55,21 +55,21 @@ type OrdersCreateRequest struct {
 
 // ProductItem is the item of product_list.
 type ProductItem struct {
-	Count        float64 `json:"count"`
-	SkuName      string  `json:"sku_name"`
-	SrcProductNo string  `json:"src_product_no"`
-	Unit         string  `json:"unit"`
+	Count        float64 `json:"count"`          // 商品数量，精确到小数点后两位
+	SkuName      string  `json:"sku_name"`       // 商品名称，限制长度128
+	SrcProductNo string  `json:"src_product_no"` // 商品编码，限制长度64
+	Unit         string  `json:"unit"`           // 商品单位，默认：件
 }
 
 // OrdersCreateResponse is the response of orders/create.
 type OrdersCreateResponse struct {
-	Status    string              `json:"status"`
-	Result    *OrdersCreateResult `json:"result"`
-	Code      int                 `json:"code"`
-	Msg       string              `json:"msg"`
+	Status    string              `json:"status"` // 响应状态，成功为"success"，失败为"fail"
+	Result    *OrdersCreateResult `json:"result"` // 响应结果，JSON对象，详见具体的接口描述
+	Code      int                 `json:"code"`   // 响应返回码，参考接口返回码
+	Msg       string              `json:"msg"`    // 响应描述
 	Success   bool                `json:"success"`
 	Fail      bool                `json:"fail"`
-	ErrorCode int                 `json:"errorCode"`
+	ErrorCode int                 `json:"errorCode"` // 错误编码，与code一致
 }
 
 // OrdersCreateResult is the result of orders/create.
@@ -429,8 +429,19 @@ type MessageBodyConfirm struct {
 	RejectReason string   `json:"rejectReason,omitempty"` // 拒绝原因
 }
 
+// OrdersTransporterCancelAsyncConfirmResponse is the response of orders/transporterCancel.
+type OrdersTransporterCancelAsyncConfirmResponse struct {
+	Status    string      `json:"status"`
+	Result    interface{} `json:"result"`
+	Code      int         `json:"code"`
+	Msg       string      `json:"msg"`
+	Success   bool        `json:"success"`
+	Fail      bool        `json:"fail"`
+	ErrorCode int         `json:"errorCode"`
+}
+
 // OrdersTransporterPositionRequest is the request of orders/transporterPosition.
-// See: http://newopen.imdada.cn/#/development/file/queryLocation
+// See: http://newopen.imdada.cn/#/development/file/queryLocation 查询骑士位置
 // 接口调用URL地址：/api/order/transporter/position
 type OrdersTransporterPositionRequest struct {
 	OrderIDS []string `json:"orderIds"` // 达达订单号 第三方订单号列表,最多传50个
