@@ -16,7 +16,7 @@
  *  You can obtain one at https://github.com/houseme/imdada-go.
  */
 
-package dada
+package log
 
 import (
 	"context"
@@ -29,7 +29,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func (c *Client) initLog(ctx context.Context, op options) {
+// InitLog init log
+func InitLog(ctx context.Context, path string, level hlog.Level) hlog.FullLogger {
 	dynamicLevel := zap.NewAtomicLevel()
 	dynamicLevel.SetLevel(zap.DebugLevel)
 	logger := hertzzap.NewLogger(
@@ -41,12 +42,12 @@ func (c *Client) initLog(ctx context.Context, op options) {
 			},
 			{
 				Enc: zapcore.NewJSONEncoder(humanEncoderConfig()),
-				Ws:  getWriteSyncer(op.LogPath + "/all.log"),
+				Ws:  getWriteSyncer(path + "/all.log"),
 				Lvl: zap.NewAtomicLevelAt(zapcore.DebugLevel),
 			},
 			{
 				Enc: zapcore.NewJSONEncoder(humanEncoderConfig()),
-				Ws:  getWriteSyncer(op.LogPath + "/debug.log"),
+				Ws:  getWriteSyncer(path + "/debug.log"),
 				Lvl: zap.NewAtomicLevelAt(zapcore.LevelOf(
 					zap.LevelEnablerFunc(func(lev zapcore.Level) bool {
 						return lev == zap.DebugLevel
@@ -54,7 +55,7 @@ func (c *Client) initLog(ctx context.Context, op options) {
 			},
 			{
 				Enc: zapcore.NewJSONEncoder(humanEncoderConfig()),
-				Ws:  getWriteSyncer(op.LogPath + "/info.log"),
+				Ws:  getWriteSyncer(path + "/info.log"),
 				Lvl: zap.NewAtomicLevelAt(zapcore.LevelOf(
 					zap.LevelEnablerFunc(func(lev zapcore.Level) bool {
 						return lev == zap.InfoLevel
@@ -62,7 +63,7 @@ func (c *Client) initLog(ctx context.Context, op options) {
 			},
 			{
 				Enc: zapcore.NewJSONEncoder(humanEncoderConfig()),
-				Ws:  getWriteSyncer(op.LogPath + "/warn.log"),
+				Ws:  getWriteSyncer(path + "/warn.log"),
 				Lvl: zap.NewAtomicLevelAt(zapcore.LevelOf(
 					zap.LevelEnablerFunc(func(lev zapcore.Level) bool {
 						return lev == zap.WarnLevel
@@ -70,7 +71,7 @@ func (c *Client) initLog(ctx context.Context, op options) {
 			},
 			{
 				Enc: zapcore.NewJSONEncoder(humanEncoderConfig()),
-				Ws:  getWriteSyncer(op.LogPath + "/error.log"),
+				Ws:  getWriteSyncer(path + "/error.log"),
 				Lvl: zap.NewAtomicLevelAt(zapcore.LevelOf(
 					zap.LevelEnablerFunc(func(lev zapcore.Level) bool {
 						return lev >= zap.ErrorLevel
@@ -80,10 +81,8 @@ func (c *Client) initLog(ctx context.Context, op options) {
 	)
 	defer logger.Sync()
 	hlog.SetLogger(logger)
-	hlog.SetLevel(op.Level)
-	c.log = logger
-	c.log.SetLevel(op.Level)
-	c.log.CtxInfof(ctx, "im dada init log start level:%s", op.Level)
+	hlog.SetLevel(level)
+	return logger
 }
 
 // humanEncoderConfig copy from zap

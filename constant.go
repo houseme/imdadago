@@ -99,14 +99,17 @@ const (
 	// complaintCreate 创建投诉
 	complaintCreate = "/api/complaint/dada"
 
+	// ComplaintReasons 投诉原因列表
+	complaintReasons = "/api/complaint/reasons"
+
 	// orderConfirmGoods 商户确认物品已返还
 	orderConfirmGoods = "/api/order/confirm/goods"
 
 	// messageConfirm 商户确认消息已读
 	messageConfirm = "/api/message/confirm"
 
-	// transporterPositionList 骑手列表
-	transporterPositionList = "/api/order/transporter/position"
+	// transporterPosition 查询骑士位置
+	transporterPosition = "/api/order/transporter/position"
 
 	// transporterTrack 骑手轨迹
 	transporterTrack = "/api/order/transporter/track"
@@ -150,3 +153,143 @@ const (
 	campus                = 65 // 校园
 	highEndMarket         = 66 // 高端市场
 )
+
+// RechargeCateH5 H5充值
+func RechargeCateH5() string {
+	return rechargeCateH5
+}
+
+// RechargeCatePC PC充值
+func RechargeCatePC() string {
+	return rechargeCatePC
+}
+
+// FoodSnacks 食品小吃
+func FoodSnacks() int {
+	return foodSnacks
+}
+
+// Drink 饮料
+func Drink() int {
+	return drink
+}
+
+// FlowersAndGreenery 鲜花绿植
+func FlowersAndGreenery() int {
+	return flowersAndGreenery
+}
+
+// Other 其他
+func Other() int {
+	return other
+}
+
+// PrintingTicketing 文印票务
+func PrintingTicketing() int {
+	return printingTicketing
+}
+
+// ConvenienceStores 便利店
+func ConvenienceStores() int {
+	return convenienceStores
+}
+
+// FreshFruit 水果生鲜
+func FreshFruit() int {
+	return freshFruit
+}
+
+// IntraCityECommerce 同城电商
+func IntraCityECommerce() int {
+	return intraCityECommerce
+}
+
+// Medicine 医药
+func Medicine() int {
+	return medicine
+}
+
+// Cake 蛋糕
+func Cake() int {
+	return cake
+}
+
+// Wine 酒品
+func Wine() int {
+	return wine
+}
+
+// SmallCommodityMarkets 小商品市场
+func SmallCommodityMarkets() int {
+	return smallCommodityMarkets
+}
+
+// Clothing 服装
+func Clothing() int {
+	return clothing
+}
+
+// AutoRepairParts 汽修零配
+func AutoRepairParts() int {
+	return autoRepairParts
+}
+
+// DigitalAppliances 数码家电
+func DigitalAppliances() int {
+	return digitalAppliances
+}
+
+// CrayfishBBQ 小龙虾/烧烤
+func CrayfishBBQ() int {
+	return crayfishBBQ
+}
+
+// Supermarket 超市
+func Supermarket() int {
+	return supermarket
+}
+
+// ChafingDish 火锅
+func ChafingDish() int {
+	return chafingDish
+}
+
+// PersonalCareMakeup 个护美妆
+func PersonalCareMakeup() int {
+	return personalCareMakeup
+}
+
+// Mother 母婴
+func Mother() int {
+	return mother
+}
+
+// HomeTextiles 家居家纺
+func HomeTextiles() int {
+	return homeTextiles
+}
+
+// CellPhone 手机
+func CellPhone() int {
+	return cellPhone
+}
+
+// Home 家装
+func Home() int {
+	return home
+}
+
+// AdultProducts 成人用品
+func AdultProducts() int {
+	return adultProducts
+}
+
+// Campus 校园
+func Campus() int {
+	return campus
+}
+
+// HighEndMarket 高端市场
+func HighEndMarket() int {
+	return highEndMarket
+}
