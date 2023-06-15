@@ -1,5 +1,5 @@
 /*
- *  Copyright `IMDaDa-Go` Author(https://houseme.github.io/imdada-go/). All Rights Reserved.
+ *  Copyright `IMDaDaGo` Author(https://houseme.github.io/imdadago/). All Rights Reserved.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  *
- *  You can obtain one at https://github.com/houseme/imdada-go.
+ *  You can obtain one at https://github.com/houseme/imdadago.
  */
 
-package dada
+package dadago
 
 const (
 	// version is the default version of ImDada.
