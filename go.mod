@@ -3,7 +3,7 @@ module github.com/houseme/imdadago
 go 1.19
 
 require (
-	github.com/bytedance/sonic v1.10.1
+	github.com/bytedance/sonic v1.10.2
 	github.com/cloudwego/hertz v0.6.8
 	github.com/hertz-contrib/logger/zap v1.1.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
