@@ -3,7 +3,7 @@ module github.com/houseme/imdadago
 go 1.19
 
 require (
-	github.com/bytedance/sonic v1.14.2
+	github.com/bytedance/sonic v1.15.0
 	github.com/cloudwego/hertz v0.10.3
 	github.com/hertz-contrib/logger/zap v1.1.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
@@ -13,7 +13,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
-	github.com/bytedance/sonic/loader v0.4.0 // indirect
+	github.com/bytedance/sonic/loader v0.5.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
 	github.com/cloudwego/gopkg v0.1.4 // indirect
 	github.com/cloudwego/netpoll v0.7.0 // indirect
