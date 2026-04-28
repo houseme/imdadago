@@ -7,7 +7,7 @@ require (
 	github.com/cloudwego/hertz v0.10.4
 	github.com/hertz-contrib/logger/zap v1.1.0
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	go.uber.org/zap v1.27.1
+	go.uber.org/zap v1.28.0
 )
 
 require (
